@@ -1,0 +1,68 @@
+   DataTable dt2 = new DataTable();
+                int a = 0;
+                string columns1 = "TRKGRP";
+                dt2.Columns.Add(columns1);
+                List<string> lis1 = itemsTDMList.Select(v => v.G9).Distinct().ToList();
+                List<string> lis = itemsTDMList.Select(v => v.G9_OC3_Slotworking).Distinct().ToList();
+                List<string> lis2 = itemsTDMList.Select(v => v.G9_OC3_Slotworking).ToList();
+                foreach(var s in lis1)
+                {
+                    dt2.Columns.Add(s);
+                    foreach (var k in lis)
+                    {
+                        dt2.Columns.Add(k);
+                    }
+                }
+                
+                foreach (var cllis in list)
+                {
+
+
+                    DataRow workRow1 = dt2.NewRow();
+                    workRow1[0] = cllis;
+
+                    List<int> cout = new List<int>();
+                    foreach (var y in itemsTDMList.Select(x => x.CKTNO))
+                    {
+                        string[] str = y.Split(',');
+
+                        List<string> s1 = new List<string>();
+                        foreach (string x in str)
+                        {
+                            string[] val = Regex.Replace(x, @"[^0-9a-zA-Z]+", " ").Split(' ');
+                            if (val.Count() == 2)
+                            {
+                                for (int j = Convert.ToInt32(val[0]); j <= Convert.ToInt32(val[1]); j++)
+                                {
+                                    s1.Add(j.ToString());
+
+                                }
+                            }
+                            else
+                            {
+                                s1.Add(val[0].ToString());
+                            }
+                        }
+
+                        int f = s1.Count();
+                        cout.Add(f);
+                    }
+
+                    if (cout[a] == 0)
+                    {
+                        workRow1[lis2[a]] = null;
+                    }
+                    else
+                    {
+                        workRow1[lis2[a]] = cout[a];
+                    }
+
+                    dt2.Rows.Add(workRow1);
+                    
+                    a++;
+                    
+                }
+            }
+            var messageBoxResults1 = CustomMessageBoxView.Show(HandleMessages.ApplicationCaption, HandleMessages.ImportTDMSuccessmsg,
+                       MessageBoxButton.OK, ViewModels.MessageBoxViewModel.MessageBoxImage.Information);
+        
